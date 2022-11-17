@@ -1,14 +1,15 @@
 <template>
  
-  <q-page :style-fn="myTweak" padding>
+  <q-page padding>
     <q-toolbar class="q-px-none">
       <q-toolbar-title class="text-weight-bold">Fan Area</q-toolbar-title>
     </q-toolbar>
-    <q-form @submit="importPreview()">
+    <q-form @submit="onSubmit()">
       <q-card flat class="q-pt-sm">
         <q-input v-model="fullName" label="Full Name" style="max-width: 400px"/>
-        <q-separator spaced inset vertical dark />            
-        <q-uploader accept=".jpg, image/*" multiple @rejected="onRejected" :factory="factoryFn" color="secondary" flat bordered ref="uploadSuperLead" class="full-width">
+        <q-separator spaced inset vertical dark />  
+
+        <q-uploader accept=".jpg, image/*" v-model="testing" multiple @rejected="onRejected" :factory="factoryFn" @added="fileAdded" color="secondary" flat bordered ref="uploadMosaic" class="full-width">
           <template v-slot:header="scope">
             <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
               <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles" round dense flat>
@@ -89,133 +90,108 @@
 <script setup>
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
-
+import services from '@/services'
+      
 const $q = useQuasar()
-defineProps({
-  msg: String
-})
 
-
+const testing = ref([]);
 const fullName = ref('');
 
-const emit = defineEmits(['siteChoose'])
-
-const onSubmit = () => {
-  console.log('onSubmit')
+const fileAdded = (files) => {
+  console.log('---> ', files)
+  console.log('object',uploadMosaic.value);
+  // $refs.uploadMosaic
 }
 
-function onRejected (rejectedEntries) {
-  // Notify plugin needs to be installed
-  // https://quasar.dev/quasar-plugins/notify#Installation
-  $q.notify({
-    type: 'negative',
-    message: `${rejectedEntries.length} file(s) did not pass validation constraints`
+const onSubmit = () => {
+  console.log('fullName', fullName.value);
+  console.log('testing', testing.value);
+  if (!fullName.value) {
+    $q.notify({
+      message: 'Please fill out your Full Name',
+      color: 'negative',
+      position: 'bottom',
+      timeout: 2000
+    })
+    return
+  }
+
+  services.getAll().then((res) => {
+    console.log(res)
   })
 }
 
-</script>
+const onRejected = (rejectedEntries) => {
+  $q.notify({
+    type: 'negative',
+    message: `${rejectedEntries.length} file(s) did not pass validation constraints. Only Images are allowed.`
+  })
+}
 
-<script>
-export default {
-  name: 'SuperLeadPage',
-  data() {
-    return {
-      step: 1,
-      columns: [],
-      file: null,
-      data: [],
-      loadingCampaigns: false,
-      campaign: null,
-      campaings: [],
-      initialPagination: {
-        sortBy: 'desc',
-        descending: false,
-        rowsPerPage: 10,
+const factoryFn = (files) => {
+  console.log('files', files);
+      // const [file] = files;
+      // this.file = file;
+      // let readCsv = await new FileReader();
+      // readCsv.readAsText(file);
+      // readCsv.onload = () => {
+      //   let csvList = readCsv.result.split('\n');
+      //   let columns = csvList[0]
+      //     .replace('\r\n', '')
+      //     .split(',')
+      //     .map((item) => ({
+      //       name: item.replaceAll('"', ''),
+      //       label: this.$t(this.capitalize(item).replaceAll('"', '').replaceAll('_', ' ')),
+      //       field: item.replaceAll('"', ''),
+      //       align: 'left',
+      //     }))
+      //     .filter((item) => item.name !== 'id_channel');
+      //   let data = csvList
+      //     .filter((item, index) => index !== 0)
+      //     .map((item) =>
+      //       item
+      //         .replace('\r', '')
+      //         .split(',')
+      //         .map((item, index) => ({
+      //           [columns[index]?.field]: item.replaceAll('"', ''),
+      //         }))
+      //     )
+      //     .map((item) => Object.assign({}, ...item));
+      //   this.columns = columns;
+      //   this.data = data;
+      // };
+      // this.$refs.stepper.next();
+    }
+
+const uploadFile = async () => {
+  try {
+    this.onLoading(true);
+
+    let form = new FormData();
+    form.append('campaign_id', this.campaign.id);
+    form.append('csv_file', this.file);
+
+    const { data, status } = await this.$http.post(`${this.urlSuperLed}lead/csv`, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       },
-    };
-  },
-  methods: {
-    myTweak(offset) {
-      return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh', padding: `${this.isMobile ? '12px 16px' : '24px 48px'}` };
-    },
-    async getCampaignsFilter() {
-      this.loadingCampaigns = true;
-      try {
-        const { data, status } = await this.$http.get('/redirect?app=ADVERTISER&path=/api/dashboard/campaigns');
-        if (status === 200) this.campaings = data;
-      } catch (error) {
-        console.log(error);
-      } finally {
-        this.loadingCampaigns = false;
-      }
-    },
-    importPreview() {
-      if (this.step === 1) this.$refs.uploadSuperLead.upload();
-      if (this.step === 2) this.importSuperLead();
-    },
-    async factoryFn(files) {
-      const [file] = files;
-      this.file = file;
-      let readCsv = await new FileReader();
-      readCsv.readAsText(file);
-      readCsv.onload = () => {
-        let csvList = readCsv.result.split('\n');
-        let columns = csvList[0]
-          .replace('\r\n', '')
-          .split(',')
-          .map((item) => ({
-            name: item.replaceAll('"', ''),
-            label: "jh",
-            field: item.replaceAll('"', ''),
-            align: 'left',
-          }))
-          .filter((item) => item.name !== 'id_channel');
-        let data = csvList
-          .filter((item, index) => index !== 0)
-          .map((item) =>
-            item
-              .replace('\r', '')
-              .split(',')
-              .map((item, index) => ({
-                [columns[index]?.field]: item.replaceAll('"', ''),
-              }))
-          )
-          .map((item) => Object.assign({}, ...item));
-        this.columns = columns;
-        this.data = data;
-      };
-      this.$refs.stepper.next();
-    },
-    async uploadFile() {
-      try {
-        this.onLoading(true);
+    });
 
-        let form = new FormData();
-        form.append('campaign_id', this.campaign.id);
-        form.append('csv_file', this.file);
+    if (status === 200) {
+      console.log(data);
+      this.$q.notify({
+        type: 'positive',
+        message: 'Arquivo enviado com sucesso',
+      });
+      this.$refs.stepper.previous();
+      this.campaign = null;
+    }
+  } catch (error) {
+    this.errorNotify(error);
+  } finally {
+    this.onLoading(false);
+  }
+}
 
-        const { data, status } = await this.$http.post(`${this.urlSuperLed}lead/csv`, form, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        if (status === 200) {
-          console.log(data);
-          this.$q.notify({
-            type: 'positive',
-            message: 'Arquivo enviado com sucesso',
-          });
-          this.$refs.stepper.previous();
-          this.campaign = null;
-        }
-      } catch (error) {
-        this.errorNotify(error);
-      } finally {
-        this.onLoading(false);
-      }
-    },
-  },
-
-};
 </script>
+
