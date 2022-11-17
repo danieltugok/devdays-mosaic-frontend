@@ -2,103 +2,83 @@
  
   <q-page :style-fn="myTweak" padding>
     <q-toolbar class="q-px-none">
-      <q-toolbar-title class="text-weight-bold" :class="isDark ? 'text-white' : 'text-primary-dark'">{{ SUPERLEAD }}</q-toolbar-title>
+      <q-toolbar-title class="text-weight-bold">Fan Area</q-toolbar-title>
     </q-toolbar>
     <q-form @submit="importPreview()">
-      <q-card flat :class="isDark ? 'q-bordered-primary-dark ' : 'q-bordered-primary'" class="q-pt-sm">
-        <q-stepper v-model="step" ref="stepper" alternative-labels color="secondary" animated>
-
-          
-          <q-step :name="1" :title="IMPORT_CSV" icon="mdi-file-upload-outline" :done="step > 1">
-
-            <q-input v-model="text" label="Full Name" style="max-width: 400px" :rules="[isRequired]"/>
-            
-            <q-uploader accept=".jpg, image/*" multiple @rejected="onRejected" :factory="factoryFn" color="secondary" flat bordered ref="uploadSuperLead" class="full-width">
-              <template v-slot:header="scope">
-                <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
-                  <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles" round dense flat>
-                    <q-tooltip>Remove Uploaded Files</q-tooltip>
-                  </q-btn>
-                  <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
-                  <div class="col">
-                    <div class="q-uploader__title">{{ UPLOAD_FILE }}</div>
-                    <div class="q-uploader__subtitle">
-                      {{ scope.uploadSizeLabel }}
-                      <!-- {{ scope.uploadProgressLabel }} -->
-                    </div>
-                  </div>
-                  <q-btn v-if="scope.canAddFiles" type="a" icon="mdi-plus" @click="scope.pickFiles" round dense flat>
-                    <q-uploader-add-trigger />
-                    <q-tooltip>Add file</q-tooltip>
-                  </q-btn>
-                  <!-- <q-btn v-if="scope.canUpload" icon="cloud_upload" @click="scope.upload" round dense flat>
-                  <q-tooltip>Upload Files</q-tooltip>
-                </q-btn> -->
-                  <q-btn v-if="scope.queuedFiles.length > 0" icon="clear_all" @click="scope.removeQueuedFiles" round dense flat>
-                    <q-tooltip>Clear All</q-tooltip>
-                  </q-btn>
-
-                  <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat>
-                    <q-tooltip>Abort Upload</q-tooltip>
-                  </q-btn>
+      <q-card flat class="q-pt-sm">
+        <q-input v-model="fullName" label="Full Name" style="max-width: 400px"/>
+        <q-separator spaced inset vertical dark />            
+        <q-uploader accept=".jpg, image/*" multiple @rejected="onRejected" :factory="factoryFn" color="secondary" flat bordered ref="uploadSuperLead" class="full-width">
+          <template v-slot:header="scope">
+            <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
+              <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles" round dense flat>
+                <q-tooltip>Remove Uploaded Files</q-tooltip>
+              </q-btn>
+              <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
+              <div class="col">
+                <div class="q-uploader__title">Upload files</div>
+                <div class="q-uploader__subtitle">
+                  Total size: {{ scope.uploadSizeLabel }}
+                  <!-- {{ scope.uploadProgressLabel }} -->
                 </div>
-              </template>
-              <template v-slot:list="scope">
-                <q-list separator padding class="q-pa-sm">
-                  <q-item v-for="file in scope.files" :key="file.__key" class="q-py-lg">
-                    <q-item-section>
-                      <q-item-label class="full-width ellipsis text-h6">
-                        {{ file.name }}
-                      </q-item-label>
-                      <!-- <q-item-label caption> Status: {{ file.__status }} </q-item-label> -->
-                      <q-item-label>Size: {{ file.__sizeLabel }} </q-item-label>
-                    </q-item-section>
+              </div>
+              <q-btn v-if="scope.canAddFiles" type="a" icon="mdi-plus" @click="scope.pickFiles" round dense flat>
+                <q-uploader-add-trigger />
+                <q-tooltip>Add file</q-tooltip>
+              </q-btn>
+              <!-- <q-btn v-if="scope.canUpload" icon="cloud_upload" @click="scope.upload" round dense flat>
+              <q-tooltip>Upload Files</q-tooltip>
+            </q-btn> -->
+              <q-btn v-if="scope.queuedFiles.length > 0" icon="clear_all" @click="scope.removeQueuedFiles" round dense flat>
+                <q-tooltip>Clear All</q-tooltip>
+              </q-btn>
 
-                    <q-item-section v-if="file.__img" thumbnail class="gt-xs">
-                      <img :src="file.__img.src" />
-                    </q-item-section>
+              <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat>
+                <q-tooltip>Abort Upload</q-tooltip>
+              </q-btn>
+            </div>
+          </template>
+          <template v-slot:list="scope">
+            <q-list separator padding class="q-pa-sm">
+              <q-item v-for="file in scope.files" :key="file.__key" class="q-py-lg">
+                <q-item-section>
+                  <q-item-label class="full-width ellipsis text-h6">
+                    {{ file.name }}
+                  </q-item-label>
+                  <!-- <q-item-label caption> Status: {{ file.__status }} </q-item-label> -->
+                  <q-item-label>Size: {{ file.__sizeLabel }} </q-item-label>
+                </q-item-section>
 
-                    <q-item-section top side>
-                      <q-btn class="gt-xs" flat color="negative" dense round icon="mdi-trash-can-outline" @click="scope.removeFile(file)" />
-                    </q-item-section>
-                  </q-item>
-                  <q-card
-                    flat
-                    v-if="scope.files.length == 0"
-                    class="text-center bg-grey-1"
-                    style="border-radius: 8px; border: 2px dashed rgba(0, 0, 0, 0.12) !important"
-                  >
-                    <q-card-section>
-                      <q-icon name="mdi-file-document-outline" size="3rem" color="primary" />
-                      <div class="text-h6">Drag and drop</div>
-                      <div class="text-subtitle2 q-py-xs">OR</div>
-                      <q-btn color="primary" unelevated dense no-caps padding="sm lg" label="Select file" @click="scope.pickFiles" />
-                    </q-card-section>
-                  </q-card>
-                </q-list>
-              </template>
-            </q-uploader>
-          </q-step>
-          <q-step :name="2" :title="VIEW_INFORMATION" icon="mdi-text-box-check-outline" :done="step > 2">
-            <q-table title="Pre-visualizar" :rows="data" :columns="columns" flat :pagination="initialPagination" />
-          </q-step>
-        </q-stepper>
+                <q-item-section v-if="file.__img" thumbnail class="gt-xs">
+                  <img :src="file.__img.src" />
+                </q-item-section>
+
+                <q-item-section top side>
+                  <q-btn class="gt-xs" flat color="negative" dense round icon="mdi-trash-can-outline" @click="scope.removeFile(file)" >
+                    <q-tooltip>Remove</q-tooltip>
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+              <q-card
+                flat
+                v-if="scope.files.length == 0"
+                class="text-center bg-grey-1"
+                style="border-radius: 8px; border: 2px dashed rgba(0, 0, 0, 0.12) !important"
+              >
+                <q-card-section>
+                  <q-icon name="mdi-file-document-outline" size="3rem" color="primary" />
+                  <div class="text-h6">Drag and drop</div>
+                  <div class="text-subtitle2 q-py-xs">OR</div>
+                  <q-btn color="primary" unelevated dense no-caps padding="sm lg" label="Select file" @click="scope.pickFiles" />
+                </q-card-section>
+              </q-card>
+            </q-list>
+          </template>
+        </q-uploader>
+
         <q-card-section>
           <div class="row q-gutter-md justify-end">
-            <q-btn
-              flat
-              unelevated
-              label="Voltar"
-              class="q-bordered-secondary"
-              v-if="step === 2"
-              color="white"
-              text-color="secondary"
-              no-caps
-              @click="$refs.stepper.previous()"
-              padding="md xl"
-            />
-            <q-btn v-if="step !== 1" unelevated no-caps label="Importar" color="secondary" @click="uploadFile()" padding="md xl" />
-            <q-btn v-else unelevated no-caps label="Submit" color="secondary" type="submit" padding="md xl" :disable="file" />
+            <q-btn unelevated no-caps label="SUBMIT" color="secondary" type="submit" padding="md xl" :disable="file" />
           </div>
         </q-card-section>
       </q-card>
@@ -108,10 +88,15 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useQuasar } from 'quasar'
 
+const $q = useQuasar()
 defineProps({
   msg: String
 })
+
+
+const fullName = ref('');
 
 const emit = defineEmits(['siteChoose'])
 
@@ -149,11 +134,6 @@ export default {
       },
     };
   },
-  computed: {
-    urlSuperLed() {
-      return process.env.NODE_ENV === 'development' ? 'https://superlead.hmg.afilio.com.br/api/' : 'https://superlead.afilio.com.br/api/';
-    },
-  },
   methods: {
     myTweak(offset) {
       return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh', padding: `${this.isMobile ? '12px 16px' : '24px 48px'}` };
@@ -172,12 +152,6 @@ export default {
     importPreview() {
       if (this.step === 1) this.$refs.uploadSuperLead.upload();
       if (this.step === 2) this.importSuperLead();
-    },
-    onRejected(rejectedEntries) {
-      this.$q.notify({
-        type: 'negative',
-        message: `${rejectedEntries} file(s) did not pass validation constraints`,
-      });
     },
     async factoryFn(files) {
       const [file] = files;
@@ -242,8 +216,6 @@ export default {
       }
     },
   },
-  created() {
-    this.getCampaignsFilter();
-  },
+
 };
 </script>
