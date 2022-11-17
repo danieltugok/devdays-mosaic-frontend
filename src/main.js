@@ -18,6 +18,6 @@ const router = createRouter({
 });
 
 createApp(App)
-  .use(Quasar, { plugins: { Notify, Loading}, })
+  .use(Quasar, { plugins: { Notify, Loading, Dialog}, })
   .use(router)
   .mount('#app')
