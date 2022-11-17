@@ -1,5 +1,5 @@
 // import axios, {AxiosInstance} from "axios";
-import axios from "axios";
+import axios from 'axios';
 import { Loading } from 'quasar';
 
 // import UseNotify from '../composables/UseNotify';
@@ -8,8 +8,8 @@ import { Loading } from 'quasar';
 // const $q = useQuasar();
 
 export const $axios = axios.create({
-  baseURL: `https://pokeapi.co/api/`,
-})
+  baseURL: `http://localhost:3000/admin`,
+});
 
 $axios.interceptors.request.use(
   (request) => {
@@ -22,33 +22,58 @@ $axios.interceptors.response.use(
   (error) => Promise.reject(error)
 );
 
-
-export default { 
+export default {
   async getAll() {
     try {
       Loading.show();
       const { data } = await $axios.get('v2/');
       return data;
     } catch (error) {
-      console.log('ERROR: ', error);  
-      if (notifyMe) notify('negative', 'Erro', 'ME');   
-      return error;  
-    } finally {
-      Loading.hide();
-  }
-  },
-
-  async me(notifyMe = false) {        
-    try {
-      Loading.show();
-      const { data, status } = await $axios.get('accounts/me');      
-      if (status === 200) return {data, status} 
-    } catch (error) {
-      console.log('ERROR: ', error);  
-      if (notifyMe) notify('negative', 'Erro', 'ME');   
-      return error;  
+      console.log('ERROR: ', error);
+      if (notifyMe) notify('negative', 'Erro', 'ME');
+      return error;
     } finally {
       Loading.hide();
     }
   },
-}
+  async getImages() {
+    try {
+      Loading.show();
+      const { data } = await $axios.get('/images/1/');
+      return data;
+    } catch (error) {
+      console.log('ERROR: ', error);
+      if (notifyMe) notify('negative', 'Erro', 'ME');
+      return error;
+    } finally {
+      Loading.hide();
+    }
+  },
+  async getEvents() {
+    try {
+      Loading.show();
+      const { data } = await $axios.get('/mosaic');
+      return data;
+    } catch (error) {
+      console.log('ERROR: ', error);
+      if (notifyMe) notify('negative', 'Erro', 'ME');
+      return error;
+    } finally {
+      Loading.hide();
+    }
+  },
+
+  async me(notifyMe = false) {
+    try {
+      Loading.show();
+      const { data, status } = await $axios.get('accounts/me');
+      if (status === 200) return { data, status };
+    } catch (error) {
+      console.log('ERROR: ', error);
+      if (notifyMe) notify('negative', 'Erro', 'ME');
+      return error;
+    } finally {
+      Loading.hide();
+    }
+  },
+};
