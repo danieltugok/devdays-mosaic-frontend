@@ -1,15 +1,5 @@
 <template>
-  <q-layout 
-    view="lhh lpR fFf"
-  > 
-    <q-header reveal class="bg-primary text-white">
-      <q-toolbar>       
-        <q-toolbar-title>School Name here - Admin site</q-toolbar-title>
-        <q-btn dense flat round icon="mdi-arrow-back-circle" @click="emit('siteChoose')" />
-      </q-toolbar>
-    </q-header>
-
-  <q-page-container>
+ 
   <q-page :style-fn="myTweak" padding>
     <q-toolbar class="q-px-none">
       <q-toolbar-title class="text-weight-bold" :class="isDark ? 'text-white' : 'text-primary-dark'">{{ SUPERLEAD }}</q-toolbar-title>
@@ -114,8 +104,6 @@
       </q-card>
     </q-form>
   </q-page>
-</q-page-container>
-  </q-layout>
 </template>
 
 <script setup>

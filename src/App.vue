@@ -1,17 +1,17 @@
 <script setup>
-import AdminSite from './components/AdminSite.vue'
-import FanSite from './components/FanSite.vue'
-import { ref, reactive } from "vue";
-import { useQuasar } from 'quasar'
+// import AdminSite from './components/AdminSite.vue'
+// import FanSite from './components/FanSite.vue'
+// import { ref, reactive } from "vue";
+// import { useQuasar } from 'quasar'
 
-const $q = useQuasar()
-console.log('>>>>>', $q)
+// const $q = useQuasar()
+// console.log('>>>>>', $q)
 
-const siteChoose = ref("");
+// const siteChoose = ref("");
 </script>
 
 <template>
-  <div 
+  <!-- <div 
     class="q-pa-md"
     v-if="siteChoose ===''"
   >
@@ -22,7 +22,9 @@ const siteChoose = ref("");
   </div>
 
   <AdminSite  v-if="siteChoose ==='admin'" @siteChoose="siteChoose = ''"/>
-  <FanSite v-if="siteChoose ==='fan'" @siteChoose="siteChoose = ''" />
+  <FanSite v-if="siteChoose ==='fan'" @siteChoose="siteChoose = ''" /> -->
+
+  <router-view />
 
 </template>
 
