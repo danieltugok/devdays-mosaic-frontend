@@ -8,19 +8,19 @@ import { Loading } from 'quasar';
 // const $q = useQuasar();
 
 export const $axios = axios.create({
-  baseURL: `https://pokeapi.co/api/`,
+  baseURL: `http://localhost:3000/`,
 })
 
-$axios.interceptors.request.use(
-  (request) => {
-    return request;
-  },
-  (error) => Promise.reject(error)
-);
-$axios.interceptors.response.use(
-  (response) => response,
-  (error) => Promise.reject(error)
-);
+// $axios.interceptors.request.use(
+//   (request) => {
+//     return request;
+//   },
+//   (error) => Promise.reject(error)
+// );
+// $axios.interceptors.response.use(
+//   (response) => response,
+//   (error) => Promise.reject(error)
+// );
 
 
 export default { 
@@ -28,6 +28,20 @@ export default {
     try {
       Loading.show();
       const { data } = await $axios.get('v2/');
+      return data;
+    } catch (error) {
+      console.log('ERROR: ', error);  
+      if (notifyMe) notify('negative', 'Erro', 'ME');   
+      return error;  
+    } finally {
+      Loading.hide();
+  }
+  },
+
+  async getImages() {
+    try {
+      Loading.show();
+      const { data } = await $axios.get('admin/images/1');
       return data;
     } catch (error) {
       console.log('ERROR: ', error);  

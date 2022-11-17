@@ -116,8 +116,11 @@ const onSubmit = () => {
     return
   }
 
-  services.getAll().then((res) => {
-    console.log(res)
+  // services.getAll().then((res) => {
+  //   console.log(res)
+  // })
+  services.getImages().then((res) => {
+    console.log('>>> ', res)
   })
 }
 
