@@ -23,35 +23,65 @@ function onRejected (rejectedEntries) {
 </script>
 
 <template>
-  <q-page padding class="flex flex-center">
-    <q-form @submit="onSubmit" class="q-gutter-md">
-      <q-card flat bordered style="width: 448px">
-        <q-card-section class="q-gutter-xs q-pa-lg">
-        </q-card-section>
-        <q-uploader
-          url="http://localhost:4444/upload"
-          label="Max file size (2k)"
-          multiple
-          max-file-size="2048"
-          @rejected="onRejected"
-        />
-        <q-card-section class="row items-center q-gutter-sm">
-          <q-btn
-            type="submit"
-            color="primary"
-            label="Submit"
-            class="col q-py-md"
-            no-caps
-            unelevated
-          />
-        </q-card-section>
-      </q-card>
-    </q-form>
+  <q-page padding>
+    <section class="s-events">
+      <h2 class="section-title">Events (pending)</h2>
+      <div class="s-events__inner row">
+        <q-card class="c-events__item my-card">
+          <img src="https://cdn.quasar.dev/img/mountains.jpg">
+
+          <q-card-section>
+            <div class="c-events__title text-h6">Lorem ipsum dolor sit amet.</div>
+            <div class="c-events__date text-subtitle2">November, 7th. 2022</div>
+          </q-card-section>
+
+          <q-card-actions>
+            <q-btn class="c-events__view" flat color="primary" to="admin/gallery">View</q-btn>
+          </q-card-actions>
+        </q-card>
+        <q-card class="c-events__item my-card">
+          <img src="https://cdn.quasar.dev/img/mountains.jpg">
+
+          <q-card-section>
+            <div class="c-events__title text-h6">Lorem ipsum dolor sit amet.</div>
+            <div class="c-events__date text-subtitle2">November, 7th. 2022</div>
+          </q-card-section>
+
+          <q-card-actions>
+            <q-btn class="c-events__view" flat color="primary">View</q-btn>
+          </q-card-actions>
+        </q-card>
+        <q-card class="c-events__item my-card">
+          <img src="https://cdn.quasar.dev/img/mountains.jpg">
+
+          <q-card-section>
+            <div class="c-events__title text-h6">Lorem ipsum dolor sit amet.</div>
+            <div class="c-events__date text-subtitle2">November, 7th. 2022</div>
+          </q-card-section>
+
+          <q-card-actions>
+            <q-btn class="c-events__view" flat color="primary">View</q-btn>
+          </q-card-actions>
+        </q-card>
+        <q-card class="c-events__item my-card">
+          <img src="https://cdn.quasar.dev/img/mountains.jpg">
+
+          <q-card-section>
+            <div class="c-events__title text-h6">Lorem ipsum dolor sit amet.</div>
+            <div class="c-events__date text-subtitle2">November, 7th. 2022</div>
+          </q-card-section>
+
+          <q-card-actions>
+            <q-btn class="c-events__view" flat color="primary">View</q-btn>
+          </q-card-actions>
+        </q-card>
+      </div>
+    </section>
   </q-page>
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
-}
+.s-events {}
+.s-events__inner {}
+.my-card {width: calc(25% - 16px); margin-left: 8px; margin-right: 8px;}
 </style>
