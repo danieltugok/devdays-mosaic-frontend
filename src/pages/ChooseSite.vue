@@ -4,7 +4,7 @@
 
 <template>
   <div class="container">
-      <q-btn color="white" label="Admin" icon="timeline" to="/admin"/>
+      <q-btn color="orange" label="Admin" icon="timeline" to="/admin"/>
       <q-btn color="white" label="Fan" icon="visibility" to="/fan" />
   </div>
 </template>
