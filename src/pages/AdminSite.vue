@@ -85,7 +85,6 @@ const eventName = ref('')
 
           <q-card-section>
             <div class="c-events__title text-h6">{{event.eventName}}</div>
-            <div class="c-events__date text-subtitle2">November, 7th. 2022</div>
           </q-card-section>
 
           <q-card-actions>
@@ -100,5 +99,5 @@ const eventName = ref('')
 <style scoped>
 .s-events {}
 .s-events__inner {}
-.my-card {width: calc(25% - 16px); margin-left: 8px; margin-right: 8px;}
+.my-card {width: calc(25% - 16px); margin: 8px;}
 </style>
