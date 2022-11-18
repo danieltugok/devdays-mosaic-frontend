@@ -94,4 +94,36 @@ export default {
       Loading.hide();
     }
   },
+  async uploadTargetImage(formData, event_id) {
+    try {
+      Loading.show();
+      const { data } = await $axios.post(
+        `/admin/mosaic/${event_id}/target-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      console.log("ERROR: ", error);
+      return error;
+    } finally {
+      Loading.hide();
+    }
+  },
+  async generateMosaic(event_id) {
+    try {
+      Loading.show();
+      const { data } = await $axios.post(`/admin/mosaic/${event_id}/generate`);
+      return data;
+    } catch (error) {
+      console.log("ERROR: ", error);
+      return error;
+    } finally {
+      Loading.hide();
+    }
+  },
 };

@@ -1,9 +1,16 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useQuasar } from 'quasar'
 import services from '@/services'
 
 const mosaic = ref(null);
 const targetImage = ref(null);
+
+const targetFile = ref(null);
+
+const targetFilePreview = ref({});
+
+const $q = useQuasar()
 
 onMounted (async () => {
   await services.getImages(props.event_id).then((res) => {
@@ -12,6 +19,9 @@ onMounted (async () => {
       ...res,
       images: res.images.map(item => { return { ...item, selected: true}})
     }
+
+    targetFilePreview.value = { targetPath: res.targetPath, targetFilename: res.targetFilename };
+    console.log(targetFilePreview);
   })
 })
 
@@ -27,14 +37,42 @@ const selectedImages = computed(() => {
   return mosaic?.value?.images?.filter(item => item.selected).length
 })
 
-
-function onRejected (rejectedEntries) {
-  $q.notify({
-    type: 'negative',
-    message: `${rejectedEntries.length} file(s) did not pass validation constraints`
-  })
+const getTargetImage = (path, filename) => {
+  if (path && filename) {
+    return "http://localhost:3000" + path + filename
+  }
+  return "../public/placeholder.jpeg";
 }
 
+const uploadTargetImage = async () => {
+  let formData = new FormData();
+  formData.append("image", targetFile.value[0])
+  var res = await services.uploadTargetImage(formData, props.event_id);
+
+  targetFilePreview.value = null;
+  targetFilePreview.value = { targetPath: res.targetPath, targetFilename: res.targetFilename };
+
+  $q.notify({
+      message: 'Successfully uploaded target image',
+      color: 'positive',
+      position: 'bottom',
+      timeout: 2000
+    })
+}
+
+
+const fileAdded = (file) => {
+  targetFile.value = file;
+}
+
+const fileRemoved = (file) => {
+  targetFile.value = null;
+}
+
+
+const generateMosaic = async() => {
+  await services.generateMosaic(props.event_id);
+}
 
 </script>
 
@@ -46,11 +84,16 @@ function onRejected (rejectedEntries) {
       </q-toolbar>
       <section>
         <div class="q-pa-md">
+          <div style="display: flex; flex-direction: row; justify-content: center; width: 100%;">
+            <q-img style="max-width: 35%; margin-bottom: 20px;" :src="getTargetImage(targetFilePreview.targetPath, targetFilePreview.targetFilename)">
+            </q-img>
+          </div>
           <q-uploader 
             v-model="targetImage"
             label="Upload Target Image"
-            :multiple="false"
             :no-thumbnails="true"
+            @added="fileAdded"
+            @removed="fileRemoved"
             accept=".jpg, image/*" 
             color="primary" 
             flat 
@@ -61,6 +104,10 @@ function onRejected (rejectedEntries) {
           </q-uploader>
         </div>
       </section>
+      <div class="row q-gutter-md justify-end">
+        <q-btn unelevated no-caps @click="uploadTargetImage" label="Upload" color="secondary" type="submit" style="margin-bottom: 20px; margin-right: 20px;" :disable="targetFile === null" />
+      </div>
+      <q-separator></q-separator>
       <section v-if="total_images" style="display: flex; flex-direction: row; justify-content: flex-end;">
         <div class="q-gutter-sm">
           <q-card class="bg-primary">
@@ -86,7 +133,7 @@ function onRejected (rejectedEntries) {
                 <q-checkbox class="c-gallery__checkbox" v-model="image.selected" :val="image.id" color="blue" keep-color/>
             </q-card>
         </div>
-        <q-btn class="c-gallery__submit" color="primary" label="Generate" />
+        <q-btn class="c-gallery__submit" color="primary" label="Generate" @click="generateMosaic"/>
       </div>
     </section>
   </q-page>

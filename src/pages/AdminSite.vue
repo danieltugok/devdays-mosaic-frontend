@@ -57,6 +57,12 @@ watch(() => events, () => {
   events.sort(() => (events.eventName > events.eventName) ? -1 : 1)
 })
 
+const getTargetImage = (path, filename) => {
+  if (path && filename) {
+    return "http://localhost:3000" + path + filename
+  }
+  return "public/placeholder.jpeg";
+}
 
 </script>
 
@@ -148,7 +154,7 @@ watch(() => events, () => {
         <template v-slot:item="props">
           <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
             <q-card flat bordered class="col-xs-12 col-sm-4 col-md-3">
-              <q-img src="public/placeholder.jpeg">
+              <q-img :src="getTargetImage(props.row.targetPath, props.row.targetFilename)">
                 <div class="absolute-bottom text-h6">
                   {{props.row.eventName}}
                 </div>
