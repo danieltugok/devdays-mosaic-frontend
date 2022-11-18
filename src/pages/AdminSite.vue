@@ -59,8 +59,8 @@ const eventName = ref('')
   <section class="s-events__forum">
     <q-btn class="s-events__form-button" color="primary" label="New Event" @click="openModal = true"/>
 
-    <q-dialog ref="dialogRef" @hide="onDialogHide" v-model="openModal">
-      <q-card class="q-dialog-plugin">
+    <q-dialog ref="dialogRef" @hide="onDialogHide" v-model="openModal" class="q-py-md q-mb-md">
+      <q-card class="q-dialog-plugin q-py-md q-mb-md">
         // event_name (required)
         <q-input
         filled
