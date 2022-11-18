@@ -135,6 +135,13 @@ const onSubmit = async () => {
   files.value.forEach(file => formData.append("images", file))
   formData.append('fullName', fullName.value);
   await services.uploadImages(formData, props.event_id);
+
+  $q.notify({
+    message: 'Successfully submitted images!',
+    color: 'positive',
+    position: 'bottom',
+    timeout: 2000
+  })
 }
 
 const onRejected = (rejectedEntries) => {

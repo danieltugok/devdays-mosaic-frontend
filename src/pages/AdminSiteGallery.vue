@@ -53,11 +53,11 @@ const uploadTargetImage = async () => {
   targetFilePreview.value = { targetPath: res.targetPath, targetFilename: res.targetFilename };
 
   $q.notify({
-      message: 'Successfully uploaded target image',
-      color: 'positive',
-      position: 'bottom',
-      timeout: 2000
-    })
+    message: 'Successfully uploaded target image!',
+    color: 'positive',
+    position: 'bottom',
+    timeout: 2000
+  })
 }
 
 
@@ -71,7 +71,15 @@ const fileRemoved = (file) => {
 
 
 const generateMosaic = async() => {
-  await services.generateMosaic(props.event_id);
+  const res = await services.generateMosaic(props.event_id);
+  mosaic.value = res
+
+  $q.notify({
+    message: 'Successfully generated mosaic!',
+    color: 'positive',
+    position: 'bottom',
+    timeout: 2000
+  })
 }
 
 </script>
@@ -85,7 +93,7 @@ const generateMosaic = async() => {
       <section>
         <div class="q-pa-md">
           <div style="display: flex; flex-direction: row; justify-content: center; width: 100%;">
-            <q-img style="max-width: 35%; margin-bottom: 20px;" :src="getTargetImage(targetFilePreview.targetPath, targetFilePreview.targetFilename)">
+            <q-img style="max-width: 25%; margin-bottom: 20px;" :src="getTargetImage(targetFilePreview.targetPath, targetFilePreview.targetFilename)">
             </q-img>
           </div>
           <q-uploader 
@@ -133,7 +141,14 @@ const generateMosaic = async() => {
                 <q-checkbox class="c-gallery__checkbox" v-model="image.selected" :val="image.id" color="blue" keep-color/>
             </q-card>
         </div>
-        <q-btn class="c-gallery__submit" color="primary" label="Generate" @click="generateMosaic"/>
+        <q-separator spaced inset vertical />
+        <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+          <q-btn class="c-gallery__submit" color="orange" label="Generate" @click="generateMosaic"/>
+        </div>
+        <div v-if="mosaic != null" style="display: flex; flex-direction: row; justify-content: center; width: 100%;">
+          <q-img style="max-width: 50%; margin-bottom: 20px;" :src="getTargetImage(mosaic.mosaicPath, mosaic.mosaicFilename)">
+          </q-img>
+        </div>    
       </div>
     </section>
   </q-page>
@@ -143,7 +158,7 @@ const generateMosaic = async() => {
 
 .section-title {font-size: 2rem; }
 .c-gallery__data {}
-.c-gallery__list {padding: 32px 0; height: 300px; overflow: auto;}
+.c-gallery__list {padding: 32px 0; height: 550px; overflow: auto;}
 .c-gallery__submit {}
 
 .c-gallery__item {position: relative;}

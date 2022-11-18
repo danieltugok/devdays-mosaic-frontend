@@ -39,7 +39,7 @@ watch(() => events, () => {
 
 const getTargetImage = (path, filename) => {
   if (path && filename) {
-    return path + filename
+    return "http://localhost:3000" + path + filename
   }
   return "public/placeholder.jpeg";
 }
