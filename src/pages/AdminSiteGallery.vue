@@ -1,16 +1,18 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import services from '@/services'
+import { TouchRepeat } from 'quasar';
 
 onMounted (async () => {
   await services.getImages(props.event_id).then((res) => {
-    images.value = res
+    images.value = res.map(item => {
+      return {
+        ...item,
+        selected: true
+      }
+    })
   })
 })
-
-// services.getImages(event_id).then((res) => {
-//     images.value = res
-// })
 
 const props = defineProps({
   event_id: String
@@ -60,7 +62,7 @@ const images = ref([]);
         <div class="c-gallery__list row">
             <q-card class="c-gallery__item my-card" v-for="image in images">
                 <img :src="`${image.path}${image.filename}`">
-                <q-checkbox class="c-gallery__checkbox" v-model="images" val="image1" color="blue" keep-color>
+                <q-checkbox class="c-gallery__checkbox" v-model="image.selected" :val="image.id" color="blue" keep-color>
                 </q-checkbox>
             </q-card>
         </div>
