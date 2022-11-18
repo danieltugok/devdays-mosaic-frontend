@@ -1,22 +1,29 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import services from '@/services'
-import { TouchRepeat } from 'quasar';
+
+const images = ref(null);
 
 onMounted (async () => {
   await services.getImages(props.event_id).then((res) => {
-    images.value = res.map(item => {
-      return {
-        ...item,
-        selected: true
-      }
-    })
+    console.log("🚀 ~ file: AdminSiteGallery.vue ~ line 7 ~ awaitservices.getImages ~ res", res)
+    // imagesApi = res.images.map(item => { return { ...item, selected: true}})
+    images.value = res
   })
 })
 
 const props = defineProps({
   event_id: String
 })
+
+const totalImages = computed(() => {
+  return images?.value?.images?.length
+})
+
+const selectedImages = computed(() => {
+  return images?.value?.images?.filter(item => item.selected).length
+})
+
 
 function onRejected (rejectedEntries) {
   $q.notify({
@@ -25,51 +32,36 @@ function onRejected (rejectedEntries) {
   })
 }
 
-const images = ref([]);
 
 </script>
 
 <template>
   <q-page padding>
     <section class="s-gallery">
-      <h2 class="section-title">Title of Event - {{event_id}}</h2>
+      <q-toolbar class="q-mb-md">
+      <q-toolbar-title>{{images?.eventName}}</q-toolbar-title>
+      <div class="q-gutter-sm">
+        <q-card class="bg-primary">
+          <q-card-section class="row text-white">
+              <q-icon name="style" size="3em" class="q-mr-md"/>
+              <div class="column">
+
+                  <div class="row"><span>{{selectedImages}}</span> / <span>{{totalImages}}</span></div>
+
+                  <span>Selected Images</span>
+              </div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </q-toolbar>
       <div class="s-gallery__inner">
-        <div class="c-gallery__data row">
-            <q-card class="my-card">
-                <q-card-section class="row">
-
-                    <q-icon name="style" size="3em"/>
-
-                    <div class="column">
-                        <span>{{total}}1200</span>
-                    <span>Total Images</span>
-                    </div>
-
-                </q-card-section>
-            </q-card>
-            <q-card class="c-gallery__card my-card">
-                <q-card-section class="row">
-                    <q-icon name="style" size="3em"/>
-
-                    <div class="column">
-                        <div class="row"><span>{{selected}} 300</span> / <span>500</span></div>
-                        <span>Selected Images</span>
-                    </div>
-                </q-card-section>
-            </q-card>
-        </div>
-
         <div class="c-gallery__list row">
-            <q-card class="c-gallery__item my-card" v-for="image in images">
-                <img :src="`${image.path}${image.filename}`">
-                <q-checkbox class="c-gallery__checkbox" v-model="image.selected" :val="image.id" color="blue" keep-color>
-                </q-checkbox>
+            <q-card class="c-gallery__item my-card" v-if="images?.images.length > 0" v-for="image in images?.images">
+                <img :src="`${image?.path}${image?.filename}`">
+                <q-checkbox class="c-gallery__checkbox" v-model="image.selected" :val="image.id" color="blue" keep-color/>
             </q-card>
         </div>
-
-        <q-btn class="c-gallery__submit" color="primary" label="Primary" />
-
-        <pre>{{ images }}</pre>
+        <q-btn class="c-gallery__submit" color="primary" label="Generate" />
       </div>
     </section>
   </q-page>

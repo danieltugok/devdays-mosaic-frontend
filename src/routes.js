@@ -43,6 +43,16 @@ export default [
           requiresAuth: false,
         },
       },
+      {
+        path: 'fan/:event_id',
+        name: 'FanGallery',
+        component: () =>
+          import(/* webpackChunkName: "auth" */ '@/pages/FanSiteGallery.vue'),
+        props: true,
+        meta: {
+          requiresAuth: false,
+        },
+      },
     ],
   },
 ];
