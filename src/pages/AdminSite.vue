@@ -89,7 +89,7 @@ const eventName = ref('')
           </q-card-section>
 
           <q-card-actions>
-            <q-btn class="c-events__view" flat color="primary" to="`admin/${event.id}`">View</q-btn>
+            <q-btn class="c-events__view" flat color="primary" :to="`admin/${event.id}`">View</q-btn>
           </q-card-actions>
         </q-card>
       </div>

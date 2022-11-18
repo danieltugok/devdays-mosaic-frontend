@@ -37,10 +37,10 @@ export default {
     }
   },
 
-  async getImages() {
+  async getImages(event_id) {
     try {
       Loading.show();
-      const { data } = await $axios.get('/admin/images/1');
+      const { data } = await $axios.get(`/admin/images/${event_id}`);
       return data;
     } catch (error) {
       console.log('ERROR: ', error);

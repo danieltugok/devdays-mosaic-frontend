@@ -25,10 +25,11 @@ export default [
         },
       },
       {
-        path: 'admin/gallery',
+        path: 'admin/:event_id',
         name: 'Gallery',
         component: () =>
           import(/* webpackChunkName: "auth" */ '@/pages/AdminSiteGallery.vue'),
+        props: true,
         meta: {
           requiresAuth: false,
         },

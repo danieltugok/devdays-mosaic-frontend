@@ -1,40 +1,36 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import services from '@/services'
 
-services.getImages().then((res) => {
+onMounted (async () => {
+  await services.getImages(props.event_id).then((res) => {
     images.value = res
+  })
 })
 
-defineProps({
-  msg: String
+// services.getImages(event_id).then((res) => {
+//     images.value = res
+// })
+
+const props = defineProps({
+  event_id: String
 })
-
-const emit = defineEmits(['siteChoose'])
-
-const onSubmit = () => {
-  console.log('onSubmit')
-}
 
 function onRejected (rejectedEntries) {
-  // Notify plugin needs to be installed
-  // https://quasar.dev/quasar-plugins/notify#Installation
   $q.notify({
     type: 'negative',
     message: `${rejectedEntries.length} file(s) did not pass validation constraints`
   })
 }
 
-const images = ref([])
-
-
+const images = ref([]);
 
 </script>
 
 <template>
   <q-page padding>
     <section class="s-gallery">
-      <h2 class="section-title">Title of Event</h2>
+      <h2 class="section-title">Title of Event - {{event_id}}</h2>
       <div class="s-gallery__inner">
         <div class="c-gallery__data row">
             <q-card class="my-card">
