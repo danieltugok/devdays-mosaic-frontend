@@ -1,15 +1,12 @@
 <template> 
   <q-page padding>
     <q-toolbar class="q-mb-md">
-      <q-toolbar-title>Fan Area</q-toolbar-title>
+      <q-toolbar-title>{{ eventName }}</q-toolbar-title>
     </q-toolbar>
 
     <q-form rounded class="q-pb-sm col-xs-12 col-sm-12 col-md-12 q-gutter" @submit="onSubmit()">
       <q-card flat class="q-pt-sm">
-        <q-input v-model="fullName" label="Full Name" style="max-width: 400px"/>
-        <q-separator spaced inset vertical dark />  
-
-        <q-uploader accept=".jpg, image/*" v-model="testing" multiple @rejected="onRejected" @added="fileAdded" color="primary" flat bordered ref="uploadMosaic" class="full-width">
+        <q-uploader accept=".jpg, image/*" multiple @rejected="onRejected" @added="fileAdded" @removed="fileRemoved" color="primary" flat bordered ref="uploadMosaic" class="full-width" style="padding: 20px;">
           <template v-slot:header="scope">
             <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
               <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles" round dense flat>
@@ -76,9 +73,9 @@
             </q-list>
           </template>
         </q-uploader>
-
         <q-card-section>
           <div class="row q-gutter-md justify-end">
+            <q-input v-model="fullName" label="Full Name" style="width: 400px;" outlined/>
             <q-btn unelevated no-caps label="SUBMIT" color="secondary" type="submit" padding="md xl" :disable="file" />
           </div>
         </q-card-section>
@@ -88,24 +85,41 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import services from '@/services'
+
+const eventName = ref("");
+
+const props = defineProps({
+  event_id: String
+})
+
+onMounted (async () => {
+  await services.getImages(props.event_id).then((res) => {
+    eventName.value = res.eventName
+  })
+})
       
 const $q = useQuasar()
 
-const testing = ref([]);
+const files = ref([]);
 const fullName = ref('');
 
-const fileAdded = (files) => {
-  console.log('---> ', files)
-  console.log('object',uploadMosaic.value);
+const fileAdded = (_files) => {
+  _files.forEach((file) => {
+    files.value.push(file);
+  })
   // $refs.uploadMosaic
 }
 
-const onSubmit = () => {
+const fileRemoved = (file) => {
+  files.value = files.value.filter(item => !file.map(element => element.__key).includes(item.__key));
+  // $refs.uploadMosaic
+}
+
+const onSubmit = async () => {
   console.log('fullName', fullName.value);
-  console.log('testing', testing.value);
   if (!fullName.value) {
     $q.notify({
       message: 'Please fill out your Full Name',
@@ -116,12 +130,11 @@ const onSubmit = () => {
     return
   }
 
-  // services.getAll().then((res) => {
-  //   console.log(res)
-  // })
-  services.getImages().then((res) => {
-    console.log('>>> ', res)
-  })
+  let formData = new FormData();
+
+  files.value.forEach(file => formData.append("images", file))
+  formData.append('fullName', fullName.value);
+  await services.uploadImages(formData, props.event_id);
 }
 
 const onRejected = (rejectedEntries) => {

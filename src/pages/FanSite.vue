@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import services from '@/services'
 import { useQuasar } from 'quasar'
 
@@ -22,18 +22,28 @@ const events = ref([])
 const modal = ref(false)
 const eventName = ref('')
 
+const getTargetImage = (path, filename) => {
+  if (path && filename) {
+    return path + filename
+  }
+  return "public/placeholder.jpeg";
+}
+
 </script>
 
 <template>
   <q-page padding> 
     <q-toolbar class="q-mb-md">
-      <q-toolbar-title>Fan Events</q-toolbar-title>
+      <q-toolbar-title>Fan Campaigns</q-toolbar-title>
     </q-toolbar>
 
     <section class="s-events">
       <div class="justify-center q-pa-md row items-start q-gutter-md">
+        <template v-if="events.length === 0">
+          <span>No campaigns to display.</span>
+        </template>
         <q-card flat bordered class="col-xs-12 col-sm-4 col-md-3" v-for="event in events">
-          <q-img src="https://cdn.quasar.dev/img/mountains.jpg">
+          <q-img :src="getTargetImage(event.targetPath, event.getTargetImage)">
             <div class="absolute-bottom text-h6">
               {{event.eventName}}
             </div>

@@ -9,7 +9,7 @@ function onDialogOK () {
   if (!eventName.value) {
     $q.notify({
       type: 'negative',
-      message: 'Event name is required'
+      message: 'Campaign name is required'
     })
     return    
   }
@@ -17,7 +17,7 @@ function onDialogOK () {
   services.createEvent(eventName.value).then((res) => {
     $q.notify({
       type: 'positive',
-      message: 'The event was created successfully!'
+      message: 'The campaign was created successfully!'
     })
 
     events.value.push(res);
@@ -68,7 +68,7 @@ watch(() => events, () => {
 
           <q-toolbar class="q-pt-lg q-px-lg">
             <q-toolbar-title class="text-weight-medium">
-              Add Event
+              Add Campaign
             </q-toolbar-title>
             <q-btn
               flat
@@ -87,7 +87,7 @@ watch(() => events, () => {
                   <q-input
                     filled
                     v-model="eventName"
-                    label="Event Name *"
+                    label="Campaign Name *"
                     lazy-rules
                     :rules="[ val => val && val.length > 0 || 'Please type something']"
                   />
@@ -118,9 +118,9 @@ watch(() => events, () => {
       </q-dialog>
     </section>
     <q-toolbar class="q-mb-md">
-      <q-toolbar-title>Events</q-toolbar-title>  
+      <q-toolbar-title>Campaigns</q-toolbar-title>  
       <div class="q-gutter-sm">
-          <q-btn class="q-px-lg" unelevated color="primary" icon="mdi-plus-box" label="Add Event" no-caps @click="modal = true"/>
+          <q-btn class="q-px-lg" unelevated color="primary" icon="mdi-plus-box" label="Add Campaign" no-caps @click="modal = true"/>
         </div>    
     </q-toolbar>
    
@@ -148,7 +148,7 @@ watch(() => events, () => {
         <template v-slot:item="props">
           <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
             <q-card flat bordered class="col-xs-12 col-sm-4 col-md-3">
-              <q-img src="https://cdn.quasar.dev/img/mountains.jpg">
+              <q-img src="public/placeholder.jpeg">
                 <div class="absolute-bottom text-h6">
                   {{props.row.eventName}}
                 </div>

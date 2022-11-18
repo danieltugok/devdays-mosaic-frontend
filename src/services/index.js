@@ -1,6 +1,6 @@
 // import axios, {AxiosInstance} from "axios";
-import axios from 'axios';
-import { Loading } from 'quasar';
+import axios from "axios";
+import { Loading } from "quasar";
 
 // import UseNotify from '../composables/UseNotify';
 // const {notify} = UseNotify();
@@ -26,10 +26,10 @@ export default {
   async ping() {
     try {
       Loading.show();
-      const { data } = await $axios.get('');
+      const { data } = await $axios.get("");
       return data;
     } catch (error) {
-      console.log('ERROR: ', error);
+      console.log("ERROR: ", error);
       return error;
     } finally {
       Loading.hide();
@@ -41,7 +41,7 @@ export default {
       const { data } = await $axios.get(`/admin/mosaic/${event_id}`);
       return data;
     } catch (error) {
-      console.log('ERROR: ', error);
+      console.log("ERROR: ", error);
       return error;
     } finally {
       Loading.hide();
@@ -50,10 +50,10 @@ export default {
   async getEvents() {
     try {
       Loading.show();
-      const { data } = await $axios.get('admin/mosaics');
+      const { data } = await $axios.get("admin/mosaics");
       return data;
     } catch (error) {
-      console.log('ERROR: ', error);
+      console.log("ERROR: ", error);
       return error;
     } finally {
       Loading.hide();
@@ -65,10 +65,30 @@ export default {
       let params = {
         event_name: eventName,
       };
-      const { data } = await $axios.post('/admin/mosaic', params);
+      const { data } = await $axios.post("/admin/mosaic", params);
       return data;
     } catch (error) {
-      console.log('ERROR: ', error);
+      console.log("ERROR: ", error);
+      return error;
+    } finally {
+      Loading.hide();
+    }
+  },
+  async uploadImages(formData, event_id) {
+    try {
+      Loading.show();
+      const { data } = await $axios.post(
+        `/fan/mosaic/${event_id}/images`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      console.log("ERROR: ", error);
       return error;
     } finally {
       Loading.hide();
